@@ -29,9 +29,13 @@ public class Main {
         orderService2.placeOrder();
 
         // Custom dependency injection container
-        DIContainer diContainer = new DIContainer();
         try {
-            diContainer.getInstanceOfClass(A.class);
+            DIContainer diContainer = new DIContainer();
+            diContainer.registerBinding(PaymentProcessor.class, CreditCardProcessor.class);
+            diContainer.registerBinding(OrderNotificationService.class, EmailSender.class);
+
+            var orderService = diContainer.getInstanceOfClass(OrderService.class);
+            orderService.placeOrder();
         } catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             IO.println(e.getMessage());
         }
