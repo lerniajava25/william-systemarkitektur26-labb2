@@ -43,7 +43,8 @@ public class Main {
         // CDI with Weld
         Weld weld = new Weld();
         try (WeldContainer container = weld.initialize()) {
-            container.select(A.class).get();
+            var orderService = container.select(OrderService.class).get();
+            orderService.placeOrder();
         }
     }
 }
