@@ -8,6 +8,8 @@ import org.example.notification.SmsSender;
 import org.example.payment.CreditCardProcessor;
 import org.example.payment.PayPalProcessor;
 import org.example.payment.PaymentProcessor;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -27,11 +29,17 @@ public class Main {
         orderService2.placeOrder();
 
         // Custom dependency injection container
-        DIContainer container = new DIContainer();
+        DIContainer diContainer = new DIContainer();
         try {
-            container.getInstanceOfClass(A.class);
+            diContainer.getInstanceOfClass(A.class);
         } catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             IO.println(e.getMessage());
+        }
+
+        // CDI with Weld
+        Weld weld = new Weld();
+        try (WeldContainer container = weld.initialize()) {
+            container.select(A.class).get();
         }
     }
 }
