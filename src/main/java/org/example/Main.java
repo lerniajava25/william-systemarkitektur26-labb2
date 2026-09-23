@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.container.A;
 import org.example.container.DIContainer;
 import org.example.notification.EmailSender;
 import org.example.notification.OrderNotificationService;
@@ -23,15 +22,22 @@ public class Main {
         OrderNotificationService smsService = new SmsSender();
 
         OrderService orderService1 = new OrderService(creditCardProcessor, emailService);
-        orderService1.placeOrder();
-
         OrderService orderService2 = new OrderService(paypalProcessor, smsService);
+
+        printSectionHeader("DEL 1: CONSTRUCTOR DEPENDENCY INJECTION");
+        orderService1.placeOrder();
         orderService2.placeOrder();
 
         // Custom dependency injection container
-        DIContainer diContainer = new DIContainer();
         try {
-            diContainer.getInstanceOfClass(A.class);
+            DIContainer diContainer = new DIContainer();
+            diContainer.registerBinding(PaymentProcessor.class, CreditCardProcessor.class);
+            diContainer.registerBinding(OrderNotificationService.class, EmailSender.class);
+
+            var orderService = diContainer.getInstanceOfClass(OrderService.class);
+
+            printSectionHeader("DEL 2: CUSTOM DEPENDENCY INJECTION CONTAINER");
+            orderService.placeOrder();
         } catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             IO.println(e.getMessage());
         }
@@ -39,7 +45,19 @@ public class Main {
         // CDI with Weld
         Weld weld = new Weld();
         try (WeldContainer container = weld.initialize()) {
-            container.select(A.class).get();
+            var orderService = container.select(OrderService.class).get();
+            printSectionHeader("DEL 3: CDI WITH WELD");
+            orderService.placeOrder();
         }
+    }
+
+    private static void printSectionHeader(String headerText) {
+        IO.print("""
+                
+                """ + headerText +
+                """
+                
+
+                """);
     }
 }
