@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.container.A;
 import org.example.container.DIContainer;
 import org.example.notification.EmailSender;
 import org.example.notification.OrderNotificationService;
