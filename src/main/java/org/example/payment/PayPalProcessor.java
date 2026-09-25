@@ -1,5 +1,8 @@
 package org.example.payment;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class PayPalProcessor implements PaymentProcessor {
     @Override
     public void processPayment() {
